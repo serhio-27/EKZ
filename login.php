@@ -1,5 +1,7 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Если пользователь уже авторизован, перенаправляем на главную
 if(isset($_SESSION['user_id'])) {
@@ -34,7 +36,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception("Неверное имя пользователя или пароль");
         }
 
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Проверяем, не заблокирован ли пользователь
         if($user['is_blocked']) {
@@ -70,19 +72,25 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } else {
             // Увеличиваем счетчик попыток
-            $attempts = $user['login_attempts'] + 1;
+            $attempts = (int)$user['login_attempts'] + 1;
             
             // Обновляем количество попыток и блокируем при достижении лимита
             $updateQuery = "UPDATE users 
                           SET login_attempts = :attempts,
                               last_attempt_time = CURRENT_TIMESTAMP,
-                              is_blocked = CASE WHEN :attempts >= 3 THEN 1 ELSE 0 END
+                              is_blocked = :is_blocked
                           WHERE id = :id";
             
             $updateStmt = $db->prepare($updateQuery);
             $updateStmt->bindParam(":attempts", $attempts);
             $updateStmt->bindParam(":id", $user['id']);
-            $updateStmt->execute();
+            $is_blocked = ($attempts >= 3) ? 1 : 0;
+            $updateStmt->bindParam(":is_blocked", $is_blocked, PDO::PARAM_BOOL);
+            
+            if(!$updateStmt->execute()) {
+                error_log("SQL Error: " . print_r($updateStmt->errorInfo(), true));
+                throw new Exception("Ошибка при обновлении данных");
+            }
 
             if($attempts >= 3) {
                 throw new Exception("Превышено количество попыток входа. Ваш аккаунт заблокирован");
@@ -93,6 +101,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         
     } catch(Exception $e) {
         $error = $e->getMessage();
+        error_log("Login Error: " . $e->getMessage());
     }
 }
 ?>
