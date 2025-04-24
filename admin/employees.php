@@ -273,17 +273,23 @@ function unblockUser(userId) {
     const formData = new FormData();
     formData.append('user_id', userId);
 
-    fetch('/admin/api/unblock_user.php', {
+    fetch('api/unblock_user.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+    .then(response => response.json().then(data => ({
+        ok: response.ok,
+        status: response.status,
+        data: data
+    })))
+    .then(result => {
+        if (result.ok && result.data.success) {
             alert('Сотрудник успешно разблокирован');
             location.reload();
         } else {
-            alert(data.error || 'Произошла ошибка при разблокировке сотрудника');
+            const errorMessage = result.data.error || 'Произошла ошибка при разблокировке сотрудника';
+            console.error('Error:', result.data);
+            alert(errorMessage);
         }
     })
     .catch(error => {

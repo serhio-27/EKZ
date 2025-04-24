@@ -102,6 +102,55 @@ body {
     border-color: #e8f5e9;
 }
 
+/* Стили для статусов */
+.status-active {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.status-blocked {
+    color: #c62828;
+    background-color: #ffebee;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Стили для кнопок в таблице */
+.table .btn {
+    margin: 2px;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+.table .btn-success {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
+
+.table .btn-success:hover {
+    background-color: #388e3c;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.table .btn-danger {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.table .btn-danger:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
 .form-control {
     border: 2px solid #e8f5e9;
     border-radius: 8px;
