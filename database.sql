@@ -1,6 +1,6 @@
 -- Создание базы данных
-CREATE DATABASE IF NOT EXISTS cafe_management;
-USE cafe_management;
+CREATE DATABASE IF NOT EXISTS caman;
+USE caman;
 
 -- Создание таблицы ролей
 CREATE TABLE roles (
@@ -15,6 +15,9 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     role_id INT NOT NULL,
+    is_blocked BOOLEAN DEFAULT FALSE,
+    login_attempts INT DEFAULT 0,
+    last_attempt_time TIMESTAMP NULL,
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
